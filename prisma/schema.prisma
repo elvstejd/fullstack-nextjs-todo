@@ -17,7 +17,7 @@ datasource db {
 model Task {
     id        String  @id @default(cuid())
     title     String
-    completed Boolean
+    completed Boolean @default(false)
     user      User    @relation(fields: [userId], references: [id])
     userId    String
 }
