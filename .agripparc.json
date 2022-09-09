@@ -3,6 +3,6 @@
     "styling": "none",
     "postCommand": "code -r <componentPath>",
     "declaration": "function",
-    "baseDir": "./",
+    "baseDir": "./src",
     "destination": "./components"
 }
