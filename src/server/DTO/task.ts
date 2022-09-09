@@ -25,9 +25,8 @@ interface updateTaskArgs {
 
 export class UpdateTask {
   id: string;
-
   @IsOptional()
-  @Length(2, 30)
+  @Length(2, 50)
   title: string;
 
   @IsOptional()
