@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 interface args {
-  id?: string;
   title: string;
   completed?: string;
 }

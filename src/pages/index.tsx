@@ -1,9 +1,10 @@
+import { Box, Title } from "@mantine/core";
 import type { NextPage } from "next";
-import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTasksMutation } from "../hooks/useTasksMutation";
 import { useTasksQuery } from "../hooks/useTasksQuery";
+import { Task } from "../components/Task";
 
 const Home: NextPage = () => {
   // const { data: session } = useSession();
@@ -21,12 +22,15 @@ const Home: NextPage = () => {
 
   return (
     <>
-      {tasks.map((task) => (
-        <p key={task.id}>{task.title}</p>
-      ))}
-      <form onSubmit={handleSubmit((data) => mutate(data))}>
-        <input {...register("title")} />
-      </form>
+      <Box sx={{ maxWidth: "30rem", margin: "0 auto", marginTop: "3rem" }}>
+        <Title mb={16}>My Todos</Title>
+        {tasks.map((task) => (
+          <Task key={task.id} data={task} />
+        ))}
+        <form onSubmit={handleSubmit((data) => mutate(data))}>
+          <input {...register("title")} />
+        </form>
+      </Box>
     </>
   );
 };
