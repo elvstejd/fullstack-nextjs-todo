@@ -4,6 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import Head from "next/head";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { MantineProvider } from "@mantine/core";
 
 const client = new QueryClient();
 
@@ -20,7 +21,15 @@ const MyApp: AppType = ({
       </Head>
       <QueryClientProvider client={client}>
         <SessionProvider session={session}>
-          <Component {...pageProps} />
+          <MantineProvider
+            withGlobalStyles
+            withNormalizeCSS
+            theme={{
+              colorScheme: "light",
+            }}
+          >
+            <Component {...pageProps} />
+          </MantineProvider>
         </SessionProvider>
         <ReactQueryDevtools />
       </QueryClientProvider>
