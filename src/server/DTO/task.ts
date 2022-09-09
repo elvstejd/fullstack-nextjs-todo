@@ -39,3 +39,15 @@ export class UpdateTask {
     if (data.completed) this.completed = data.completed;
   }
 }
+
+interface deleteTaskArgs {
+  id: string;
+}
+
+export class DeleteTask {
+  id: string;
+
+  constructor(data: deleteTaskArgs) {
+    this.id = data.id;
+  }
+}

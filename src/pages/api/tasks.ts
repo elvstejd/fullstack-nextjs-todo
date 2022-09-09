@@ -2,7 +2,7 @@ import { validate } from "class-validator";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { withAuthentication } from "../../server/common/with-authentication";
 import { prisma } from "../../server/db/client";
-import { CreateTask, UpdateTask } from "../../server/DTO/task";
+import { CreateTask, DeleteTask, UpdateTask } from "../../server/DTO/task";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const uid = req.headers.uid as string;
@@ -38,6 +38,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       res.status(200).json(updatedTask);
+      break;
+
+    case "DELETE":
+      const deleteTask = new DeleteTask(req.body);
+      console.log(deleteTask);
+      const deletedTask = await prisma.task.delete({ where: deleteTask });
+      res.status(204).json(deletedTask);
       break;
 
     default:

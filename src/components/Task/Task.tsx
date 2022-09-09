@@ -1,6 +1,7 @@
-import { Box, Group, Text, useMantineTheme } from "@mantine/core";
+import { Box, Button, Group, Text, useMantineTheme } from "@mantine/core";
 import React, { useState } from "react";
 import { BiCheckCircle, BiCircle } from "react-icons/bi";
+import { useTaskDelete } from "../../hooks/useTaskDelete";
 import { useTaskMutation } from "../../hooks/useTaskMutation";
 
 export interface TaskProps {
@@ -15,6 +16,7 @@ export function Task({ data: task }: TaskProps) {
   const theme = useMantineTheme();
   const { mutate } = useTaskMutation();
   const [done, setDone] = useState(task.completed);
+  const { mutate: remove } = useTaskDelete();
 
   return (
     <Box
@@ -28,19 +30,33 @@ export function Task({ data: task }: TaskProps) {
     >
       <Group position="apart" align="center">
         <Text>{task.title}</Text>
-        <Box
-          sx={{ cursor: "pointer" }}
-          onClick={() => {
-            mutate({ id: task.id, completed: !task.completed });
-            setDone((prev) => !prev);
-          }}
-        >
-          {done ? (
-            <BiCheckCircle size={24} color={theme.colors.gray[6]} />
-          ) : (
-            <BiCircle size={24} color={theme.colors.gray[6]} />
-          )}
-        </Box>
+        <Group align="center" spacing="xs">
+          <Button variant="subtle" compact size="xs" color="gray">
+            Editar
+          </Button>
+          <Button
+            variant="subtle"
+            compact
+            size="xs"
+            color="gray"
+            onClick={() => remove({ id: task.id })}
+          >
+            Eliminar
+          </Button>
+          <Box
+            sx={{ cursor: "pointer" }}
+            onClick={() => {
+              mutate({ id: task.id, completed: !task.completed });
+              setDone((prev) => !prev);
+            }}
+          >
+            {done ? (
+              <BiCheckCircle size={24} color={theme.colors.gray[6]} />
+            ) : (
+              <BiCircle size={24} color={theme.colors.gray[6]} />
+            )}
+          </Box>
+        </Group>
       </Group>
     </Box>
   );
