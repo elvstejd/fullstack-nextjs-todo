@@ -7,7 +7,6 @@ import { useTasksQuery } from "../hooks/useTasksQuery";
 import { Task } from "../components/Task";
 
 const Home: NextPage = () => {
-  // const { data: session } = useSession();
   const { mutate, isSuccess } = useTasksMutation();
   const { data: tasks } = useTasksQuery();
   const { handleSubmit, register, reset } = useForm({
