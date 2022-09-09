@@ -1,11 +1,10 @@
-// src/pages/api/examples.ts
 import { validate } from "class-validator";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { withAuthentication } from "../../server/common/with-authentication";
 import { prisma } from "../../server/db/client";
-import { CreateTask } from "../../server/DTO/task";
+import { CreateTask, UpdateTask } from "../../server/DTO/task";
 
-const examples = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const uid = req.headers.uid as string;
 
   switch (req.method) {
@@ -15,16 +14,30 @@ const examples = async (req: NextApiRequest, res: NextApiResponse) => {
       break;
 
     case "POST":
-      const task = new CreateTask(req.body);
-      task.userId = uid;
+      const postTask = new CreateTask(req.body);
+      postTask.userId = uid;
 
-      const errors = await validate(task);
-      if (errors.length) return res.status(400).json(errors);
+      const postErrors = await validate(postTask);
+      if (postErrors.length) return res.status(400).json(postErrors);
 
       const createdTask = await prisma.task.create({
-        data: { title: task.title, userId: task.userId },
+        data: { title: postTask.title, userId: postTask.userId },
       });
       res.status(201).json(createdTask);
+      break;
+
+    case "PATCH":
+      const patchTask = new UpdateTask(req.body);
+
+      const patchErrors = await validate(patchTask);
+      if (patchErrors.length) return res.status(400).json(patchErrors);
+
+      const updatedTask = await prisma.task.update({
+        where: { id: patchTask.id },
+        data: patchTask,
+      });
+
+      res.status(200).json(updatedTask);
       break;
 
     default:
@@ -33,4 +46,4 @@ const examples = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withAuthentication(examples);
+export default withAuthentication(handler);
