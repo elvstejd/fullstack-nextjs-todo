@@ -30,11 +30,24 @@ const Home: NextPage = () => {
           )}
 
           <Paper withBorder shadow="xs">
-            {tasks.map((task, index) => (
-              <Task index={index} key={task.id} data={task} />
-            ))}
             <TaskInput />
           </Paper>
+          <Box
+            sx={{
+              marginTop: "1rem",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "1rem",
+            }}
+          >
+            {tasks.map(
+              (task: { id: string; title: string; completed: boolean }) => (
+                <Paper key={task.id} withBorder>
+                  <Task data={task} />
+                </Paper>
+              )
+            )}
+          </Box>
         </Box>
       </Box>
     </>
