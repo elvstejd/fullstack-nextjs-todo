@@ -1,9 +1,12 @@
-import { IsOptional, Length } from "class-validator";
+import { z } from "zod";
 
-interface createTaskArgs {
-  title: string;
-  userId: string;
-}
+export const createTaskSchema = z.object({
+  title: z
+    .string()
+    .min(2, "El titulo de la tarea debe ser mayor o igual a 2 caracteres")
+    .max(60, "El titulo de la tarea no puede sobrepasar los 50 caracteres."),
+  userId: z.string(),
+});
 
 export class CreateTask {
   @Length(2, 30)
