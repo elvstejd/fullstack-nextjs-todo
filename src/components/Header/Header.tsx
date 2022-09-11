@@ -70,15 +70,17 @@ export function Header() {
                   >
                     Cerrar sesion
                   </Button>
-                  <Button
-                    size="sm"
-                    compact
-                    variant="subtle"
-                    loading={isLoading}
-                    onClick={() => mutate()}
-                  >
-                    Extender tiempo
-                  </Button>
+                  {session.user?.expiresAt && (
+                    <Button
+                      size="sm"
+                      compact
+                      variant="subtle"
+                      loading={isLoading}
+                      onClick={() => extendUserExpiry()}
+                    >
+                      Extender tiempo
+                    </Button>
+                  )}
                 </Group>
               </>
             ) : (
