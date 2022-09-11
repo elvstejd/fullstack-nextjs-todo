@@ -15,11 +15,12 @@ datasource db {
 }
 
 model Task {
-    id        String  @id @default(cuid())
+    id        String   @id @default(cuid())
     title     String
-    completed Boolean @default(false)
-    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    completed Boolean  @default(false)
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String
+    createdAt DateTime @default(now())
 }
 
 model User {

@@ -9,7 +9,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     case "GET":
-      const tasks = await prisma.task.findMany({ where: { userId: uid } });
+      const tasks = await prisma.task.findMany({
+        where: { userId: uid },
+        orderBy: { createdAt: "asc" },
+      });
       res.status(200).json(tasks);
       break;
 
