@@ -24,9 +24,9 @@ const Home: NextPage = () => {
             {tasks.map((task, index) => (
               <Task index={index} key={task.id} data={task} />
             ))}
+            <TaskInput />
           </Paper>
         </Box>
-        <TaskInput />
       </Box>
     </>
   );

@@ -1,5 +1,6 @@
-import { Affix, Button, Group, TextInput } from "@mantine/core";
+import { Button, Group, TextInput } from "@mantine/core";
 import { useForm } from "react-hook-form";
+import { BiPlus } from "react-icons/bi";
 import { useTasksMutation } from "../../hooks/useTasksMutation";
 
 export function TaskInput() {
@@ -11,29 +12,34 @@ export function TaskInput() {
   const { mutate, isLoading } = useTasksMutation();
 
   return (
-    <Affix position={{ bottom: 16, left: 0, right: 0 }}>
-      <form
-        onSubmit={handleSubmit((data) =>
-          mutate(data, {
-            onSuccess() {
-              reset();
-            },
-          })
-        )}
+    <form
+      onSubmit={handleSubmit((data) =>
+        mutate(data, {
+          onSuccess() {
+            reset();
+          },
+        })
+      )}
+    >
+      <Group
+        spacing="sm"
+        sx={(theme) => ({
+          padding: ".8rem 1rem",
+          borderTop: `1px solid ${theme.colors.gray[3]}}`,
+        })}
       >
-        <Group sx={{ maxWidth: "30rem", margin: "0 auto" }} spacing="sm">
-          <TextInput
-            placeholder="I want to..."
-            style={{ flex: 1 }}
-            radius="lg"
-            size="md"
-            {...register("title")}
-          />
-          <Button radius="lg" size="md" loading={isLoading}>
-            Add
-          </Button>
-        </Group>
-      </form>
-    </Affix>
+        <BiPlus color="gray" />
+        <TextInput
+          variant="unstyled"
+          placeholder="Nueva tarea"
+          style={{ flex: 1 }}
+          {...register("title")}
+          disabled={isLoading}
+        />
+        <Button type="submit" radius="lg" size="sm" compact loading={isLoading}>
+          Agregar
+        </Button>
+      </Group>
+    </form>
   );
 }
