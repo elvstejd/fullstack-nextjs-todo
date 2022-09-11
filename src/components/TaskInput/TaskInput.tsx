@@ -2,8 +2,10 @@ import { Button, Group, TextInput } from "@mantine/core";
 import { useForm } from "react-hook-form";
 import { BiPlus } from "react-icons/bi";
 import { useTasksMutation } from "../../hooks/useTasksMutation";
+import { useSession } from "next-auth/react";
 
 export function TaskInput() {
+  const { data: session } = useSession();
   const { handleSubmit, register, reset } = useForm({
     defaultValues: {
       title: "",
@@ -34,9 +36,16 @@ export function TaskInput() {
           placeholder="Nueva tarea"
           style={{ flex: 1 }}
           {...register("title")}
-          disabled={isLoading}
+          disabled={isLoading || !session}
         />
-        <Button type="submit" radius="lg" size="sm" compact loading={isLoading}>
+        <Button
+          type="submit"
+          radius="lg"
+          size="sm"
+          compact
+          loading={isLoading}
+          disabled={!session}
+        >
           Agregar
         </Button>
       </Group>
