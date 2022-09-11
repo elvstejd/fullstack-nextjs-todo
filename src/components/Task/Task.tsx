@@ -69,7 +69,7 @@ export function Task({ data: task, index }: TaskProps) {
                 )}
               </Center>
             </Box>
-            <Text weight={600} color="gray.8">
+            <Text weight={600} color={done ? "gray.5" : "gray.8"}>
               {task.title}
             </Text>
           </Group>
@@ -99,7 +99,7 @@ export function Task({ data: task, index }: TaskProps) {
       </Box>
       <Modal
         centered
-        title="Edit task"
+        title="Editar tarea"
         opened={showEditModal}
         onClose={() => setShowEditModal(false)}
       >
@@ -127,7 +127,7 @@ export function Task({ data: task, index }: TaskProps) {
             mt={16}
             type="submit"
           >
-            Save
+            Editar
           </Button>
         </form>
       </Modal>
