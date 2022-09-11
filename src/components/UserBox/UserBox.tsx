@@ -9,15 +9,31 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import Countdown from "react-countdown";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 export function UserBox() {
   const { data: session, status } = useSession();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
   const { register, handleSubmit } = useForm();
+  const { mutate, isLoading } = useMutation(async () => {
+    const { data } = await axios.get("/api/auth/extend");
+    return data;
+  });
+
+  useEffect(() => {
+    let interval;
+
+    if (authLoading) {
+      interval = setInterval(() => setAuthLoading(false), 5000);
+    }
+    return () => clearInterval(interval);
+  }, [authLoading]);
 
   return (
     <>
@@ -31,18 +47,44 @@ export function UserBox() {
       >
         {session ? (
           <>
-            <Text>Hello {session.user.username}</Text>
-            <pre>{JSON.stringify(session)}</pre>
+            <Text>Hola {session.user.username ?? "USUARIO TEMPORAL"}</Text>
             <Text>
               {session.user.expiresAt && (
-                <Countdown
-                  onComplete={() => signOut()}
-                  date={session.user.expiresAt}
-                />
+                <>
+                  <Text>
+                    Su usuario será invalidado una vez se acabe el tiempo (30
+                    minutos)
+                  </Text>
+                  <Countdown
+                    onComplete={() => signOut()}
+                    date={session.user.expiresAt}
+                  />
+                </>
               )}
             </Text>
-
-            <Button onClick={() => signOut()}>Cerrar sesion</Button>
+            <Group spacing="xs">
+              <Button
+                onClick={() => {
+                  signOut();
+                  setAuthLoading(true);
+                }}
+                loading={authLoading}
+              >
+                Cerrar sesion
+              </Button>
+              <Button
+                variant="subtle"
+                loading={isLoading}
+                onClick={() =>
+                  mutate(null, {
+                    onSuccess: () =>
+                      signIn("temp-extend", { id: session.user.id }),
+                  })
+                }
+              >
+                Extender tiempo
+              </Button>
+            </Group>
           </>
         ) : (
           <>
@@ -54,11 +96,25 @@ export function UserBox() {
               Continuar con:
             </Text>
             <Group spacing="xs">
-              <Button size="sm" compact onClick={() => setShowLoginModal(true)}>
+              <Button
+                size="sm"
+                compact
+                onClick={() => setShowLoginModal(true)}
+                disabled={authLoading}
+              >
                 Mi cuenta
               </Button>
-              <Button compact size="sm" onClick={() => signIn("temp")}>
-                Como invitado
+              <Button
+                compact
+                size="sm"
+                onClick={() => {
+                  signIn("temp");
+                  setAuthLoading(true);
+                }}
+                variant="subtle"
+                loading={authLoading}
+              >
+                Perfil de invitado
               </Button>
             </Group>
           </>

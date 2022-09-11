@@ -18,7 +18,7 @@ model Task {
     id        String  @id @default(cuid())
     title     String
     completed Boolean @default(false)
-    user      User    @relation(fields: [userId], references: [id])
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String
 }
 

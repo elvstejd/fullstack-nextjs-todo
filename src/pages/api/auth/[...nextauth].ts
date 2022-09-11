@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
     }),
     CredentialsProvider({
       id: "temp",
-      name: "temp",
+      name: "Temp",
       credentials: {},
       async authorize() {
         const randomString = Math.random().toString(36).slice(2);
@@ -58,10 +58,29 @@ export const authOptions: NextAuthOptions = {
           data: {
             username: randomString,
             password: "temp",
-            expiresAt: dayjs().add(10, "seconds").toDate(),
+            expiresAt: dayjs().add(30, "minutes").toDate(),
           },
         });
-        return tempUser;
+        return {
+          id: tempUser.id,
+          expiresAt: tempUser.expiresAt,
+        };
+      },
+    }),
+    CredentialsProvider({
+      id: "temp-extend",
+      name: "Extend Temp",
+      credentials: {
+        id: {},
+      },
+      async authorize(credentials) {
+        const extendedTempUser = await prisma.user.findUniqueOrThrow({
+          where: { id: credentials.id },
+        });
+        return {
+          id: extendedTempUser.id,
+          expiresAt: extendedTempUser.expiresAt,
+        };
       },
     }),
   ],

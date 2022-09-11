@@ -11,7 +11,9 @@ const Home: NextPage = () => {
   return (
     <>
       <Box sx={{ display: "grid", gridTemplateColumns: "1fr 2fr" }}>
-        <UserBox />
+        <div>
+          <UserBox />
+        </div>
         <Box
           sx={{
             maxWidth: "30rem",
