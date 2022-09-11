@@ -2,7 +2,7 @@ import { validate } from "class-validator";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { withAuthentication } from "../../server/common/with-authentication";
 import { prisma } from "../../server/db/client";
-import { CreateTask, DeleteTask, UpdateTask } from "../../server/DTO/task";
+import { createTaskSchema } from "../../server/DTO/task";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const uid = req.headers.uid as string;
@@ -17,16 +17,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       break;
 
     case "POST":
-      const postTask = new CreateTask(req.body);
-      postTask.userId = uid;
+      try {
+        const postTask = createTaskSchema.parse({ ...req.body, userId: uid });
+        const createdTask = await prisma.task.create({
+          data: { title: postTask.title, userId: postTask.userId },
+        });
 
-      const postErrors = await validate(postTask);
-      if (postErrors.length) return res.status(400).json(postErrors);
+        res.status(201).json(createdTask);
+      } catch (e) {
+        res.status(400).json(e);
+      }
 
-      const createdTask = await prisma.task.create({
-        data: { title: postTask.title, userId: postTask.userId },
-      });
-      res.status(201).json(createdTask);
       break;
 
     case "PATCH":
