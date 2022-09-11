@@ -20,6 +20,7 @@ const Home: NextPage = () => {
             margin: "0 auto",
             marginTop: "3rem",
             marginBottom: "4.5rem",
+            padding: "1rem",
           }}
         >
           {!session && (
@@ -29,15 +30,18 @@ const Home: NextPage = () => {
             </Alert>
           )}
 
-          <Paper withBorder shadow="xs">
+          <Paper shadow="xs">
             <TaskInput />
           </Paper>
           <Box
             sx={{
               marginTop: "1rem",
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: "1fr",
               gap: "1rem",
+              "@media only screen and (min-width: 600px)": {
+                gridTemplateColumns: "1fr 1fr",
+              },
             }}
           >
             {tasks.map(
