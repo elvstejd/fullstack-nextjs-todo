@@ -12,21 +12,21 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Countdown from "react-countdown";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { useExtendUserExpiry } from "../../hooks/useExtendUserExpiry";
+import { useSignUp } from "../../hooks/useSignUp";
 
 export function Header() {
   const { data: session, status } = useSession();
+  const [authMode, setAuthMode] = useState<"Iniciar sesión" | "Registrarse">(
+    "Iniciar sesión"
+  );
   const [authLoading, setAuthLoading] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const { register, handleSubmit } = useForm();
-  const { mutate, isLoading } = useMutation(
-    async () => {
-      const { data } = await axios.get("/api/auth/extend");
-      return data;
-    },
-    { onSuccess: () => signIn("temp-extend", { id: session?.user?.id }) }
-  );
+  const { register, handleSubmit } = useForm({
+    defaultValues: { username: "", password: "" },
+  });
+  const { mutate: extendUserExpiry, isLoading } = useExtendUserExpiry();
+  const { mutate: signUp } = useSignUp();
 
   useEffect(() => {
     let interval: NodeJS.Timer;
@@ -113,20 +113,24 @@ export function Header() {
         </Group>
       </Box>
       <Modal
-        title="Inicia sesion"
+        title={authMode}
         opened={showLoginModal}
         onClose={() => setShowLoginModal(false)}
       >
         <form
-          onSubmit={handleSubmit((data) =>
+          onSubmit={handleSubmit((data) => {
+            if (authMode === "Registrarse") {
+              signUp(data);
+              return;
+            }
             signIn("credentials", {
               email: data.username,
               ...data,
               callbackUrl: `${window.location.origin}/`,
-            })
-          )}
+            });
+          })}
         >
-          <Stack>
+          <Stack mb={16}>
             <TextInput label="Usuario" {...register("username")} />
             <TextInput
               label="Clave"
@@ -134,9 +138,25 @@ export function Header() {
               {...register("password")}
             />
             <Button loading={status === "loading"} type="submit">
-              Iniciar sesión
+              Enviar
             </Button>
           </Stack>
+          <Text
+            variant="link"
+            sx={{ display: "inline" }}
+            onClick={() =>
+              setAuthMode((prev) => {
+                if (prev === "Iniciar sesión") return "Registrarse";
+                return "Iniciar sesión";
+              })
+            }
+          >
+            {authMode === "Iniciar sesión" ? "Registrate" : "Inicia sesion"}
+          </Text>
+          <Text sx={{ display: "inline" }}>
+            {" "}
+            si {authMode === "Registrarse" ? "ya" : "no"} tienes una cuenta.
+          </Text>
         </form>
       </Modal>
     </>
