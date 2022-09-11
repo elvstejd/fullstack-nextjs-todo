@@ -17,7 +17,7 @@ export function useTasksMutation() {
   const queryClient = useQueryClient();
   return useMutation(mutation, {
     onError(axiosError: AxiosError) {
-      const zodError = axiosError.response.data as ZodError;
+      const zodError = axiosError.response?.data as ZodError;
       const errors = zodError.issues;
 
       showNotification({
