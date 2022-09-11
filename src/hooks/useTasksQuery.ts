@@ -7,5 +7,5 @@ async function query() {
 }
 
 export function useTasksQuery() {
-  return useQuery(["tasks"], query, { initialData: [], retry: 2 });
+  return useQuery(["tasks"], query, { initialData: [], retry: false });
 }
