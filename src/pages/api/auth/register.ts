@@ -5,7 +5,7 @@ import { Register } from "../../../server/DTO/register";
 import { validate } from "class-validator";
 import bcrypt from "bcrypt";
 
-const register = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const credentials = new Register(req.body);
   const errors = await validate(credentials);
   if (errors.length) return res.status(400).json(errors);
@@ -22,4 +22,4 @@ const register = async (req: NextApiRequest, res: NextApiResponse) => {
   res.status(200).json({ message: "User created" });
 };
 
-export default register;
+export default handler;
