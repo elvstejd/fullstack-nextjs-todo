@@ -23,7 +23,6 @@ import { useTaskDelete } from "../../hooks/useTaskDelete";
 import { useTaskMutation } from "../../hooks/useTaskMutation";
 
 export interface TaskProps {
-  index: number;
   data: {
     id: string;
     title: string;
@@ -31,7 +30,7 @@ export interface TaskProps {
   };
 }
 
-export function Task({ data: task, index }: TaskProps) {
+export function Task({ data: task }: TaskProps) {
   const theme = useMantineTheme();
   const { mutate, isLoading } = useTaskMutation();
   const [done, setDone] = useState(task.completed);
@@ -46,9 +45,8 @@ export function Task({ data: task, index }: TaskProps) {
   return (
     <>
       <Box
-        sx={(theme) => ({
+        sx={() => ({
           padding: ".8rem 1rem",
-          borderTop: index && `1px solid ${theme.colors.gray[3]}}`,
         })}
         key={task.id}
       >
