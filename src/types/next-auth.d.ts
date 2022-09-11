@@ -7,7 +7,7 @@ declare module "next-auth" {
 
   interface CustomUser extends DefaultSession["user"] {
     id: string;
-    username: string;
+    username?: string;
     expiresAt?: Date;
   }
 

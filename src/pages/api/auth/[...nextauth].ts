@@ -31,10 +31,11 @@ export const authOptions: NextAuthOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
+        console.log({ credentials });
         const user = await prisma.user.findUniqueOrThrow({
           where: { username: credentials?.username },
         });
-        console.log(user);
+        console.log({ user });
 
         if (
           credentials?.password &&
@@ -43,6 +44,7 @@ export const authOptions: NextAuthOptions = {
           return {
             id: user.id,
             username: user.username,
+            expiresAt: user.expiresAt,
           };
         }
         return null;
@@ -75,7 +77,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         const extendedTempUser = await prisma.user.findUniqueOrThrow({
-          where: { id: credentials.id },
+          where: { id: credentials?.id },
         });
         return {
           id: extendedTempUser.id,
@@ -91,7 +93,7 @@ export const authOptions: NextAuthOptions = {
     },
     async signOut({ token }) {
       const user = token.user as CustomUser;
-      await prisma.user.delete({ where: { id: user.id } });
+      if (user.expiresAt) await prisma.user.delete({ where: { id: user.id } });
     },
   },
 };
