@@ -20,13 +20,16 @@ export function Header() {
   const [authLoading, setAuthLoading] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { register, handleSubmit } = useForm();
-  const { mutate, isLoading } = useMutation(async () => {
-    const { data } = await axios.get("/api/auth/extend");
-    return data;
-  });
+  const { mutate, isLoading } = useMutation(
+    async () => {
+      const { data } = await axios.get("/api/auth/extend");
+      return data;
+    },
+    { onSuccess: () => signIn("temp-extend", { id: session?.user?.id }) }
+  );
 
   useEffect(() => {
-    let interval;
+    let interval: NodeJS.Timer;
 
     if (authLoading) {
       interval = setInterval(() => setAuthLoading(false), 5000);
@@ -42,8 +45,10 @@ export function Header() {
           <Group spacing="xs">
             {session ? (
               <>
-                <Text>Hola, {session.user.username ?? "Usuario temporal"}</Text>
-                {session.user.expiresAt && (
+                <Text>
+                  Hola, {session.user?.username ?? "Usuario temporal"}
+                </Text>
+                {session.user?.expiresAt && (
                   <>
                     <Text>
                       <Countdown
@@ -70,12 +75,7 @@ export function Header() {
                     compact
                     variant="subtle"
                     loading={isLoading}
-                    onClick={() =>
-                      mutate(null, {
-                        onSuccess: () =>
-                          signIn("temp-extend", { id: session.user.id }),
-                      })
-                    }
+                    onClick={() => mutate()}
                   >
                     Extender tiempo
                   </Button>
