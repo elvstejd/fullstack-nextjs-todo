@@ -14,15 +14,15 @@ const Home: NextPage = () => {
       <Box>
         <Box
           sx={{
-            maxWidth: "30rem",
+            maxWidth: "50rem",
             margin: "0 auto",
             marginTop: "3rem",
             marginBottom: "4.5rem",
           }}
         >
-          <Paper>
-            {tasks.map((task) => (
-              <Task key={task.id} data={task} />
+          <Paper withBorder shadow="xs">
+            {tasks.map((task, index) => (
+              <Task index={index} key={task.id} data={task} />
             ))}
           </Paper>
         </Box>

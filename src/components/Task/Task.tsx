@@ -1,7 +1,10 @@
 import {
+  ActionIcon,
   Box,
   Button,
+  Center,
   Group,
+  Menu,
   Modal,
   Text,
   TextInput,
@@ -9,11 +12,18 @@ import {
 } from "@mantine/core";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { BiCheckCircle, BiCircle } from "react-icons/bi";
+import {
+  BiCheckCircle,
+  BiCircle,
+  BiDotsVerticalRounded,
+  BiEdit,
+  BiTrash,
+} from "react-icons/bi";
 import { useTaskDelete } from "../../hooks/useTaskDelete";
 import { useTaskMutation } from "../../hooks/useTaskMutation";
 
 export interface TaskProps {
+  index: number;
   data: {
     id: string;
     title: string;
@@ -21,11 +31,11 @@ export interface TaskProps {
   };
 }
 
-export function Task({ data: task }: TaskProps) {
+export function Task({ data: task, index }: TaskProps) {
   const theme = useMantineTheme();
   const { mutate, isLoading } = useTaskMutation();
   const [done, setDone] = useState(task.completed);
-  const { mutate: remove, isLoading: isDeleting } = useTaskDelete();
+  const { mutate: remove } = useTaskDelete();
   const [showEditModal, setShowEditModal] = useState(false);
   const { handleSubmit, control } = useForm({
     defaultValues: {
@@ -37,35 +47,13 @@ export function Task({ data: task }: TaskProps) {
     <>
       <Box
         sx={(theme) => ({
-          background: theme.colors.gray[1],
-          borderRadius: theme.radius.md,
-          padding: "1rem",
-          marginBottom: ".5rem",
+          padding: ".8rem 1rem",
+          borderTop: index && `1px solid ${theme.colors.gray[3]}}`,
         })}
         key={task.id}
       >
         <Group position="apart" align="center">
-          <Text>{task.title}</Text>
-          <Group align="center" spacing="xs">
-            <Button
-              variant="subtle"
-              compact
-              size="xs"
-              color="gray"
-              onClick={() => setShowEditModal(true)}
-            >
-              Editar
-            </Button>
-            <Button
-              variant="subtle"
-              compact
-              size="xs"
-              color="gray"
-              onClick={() => remove({ id: task.id })}
-              loading={isDeleting}
-            >
-              Eliminar
-            </Button>
+          <Group spacing="xs">
             <Box
               sx={{ cursor: "pointer" }}
               onClick={() => {
@@ -73,13 +61,40 @@ export function Task({ data: task }: TaskProps) {
                 setDone((prev) => !prev);
               }}
             >
-              {done ? (
-                <BiCheckCircle size={24} color={theme.colors.gray[6]} />
-              ) : (
-                <BiCircle size={24} color={theme.colors.gray[6]} />
-              )}
+              <Center>
+                {done ? (
+                  <BiCheckCircle size={24} color={theme.colors.gray[6]} />
+                ) : (
+                  <BiCircle size={24} color={theme.colors.gray[6]} />
+                )}
+              </Center>
             </Box>
+            <Text weight={600} color="gray.8">
+              {task.title}
+            </Text>
           </Group>
+          <Menu>
+            <Menu.Target>
+              <ActionIcon>
+                <BiDotsVerticalRounded />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                icon={<BiEdit />}
+                onClick={() => setShowEditModal(true)}
+              >
+                Editar
+              </Menu.Item>
+              <Menu.Item
+                icon={<BiTrash />}
+                color="red"
+                onClick={() => remove({ id: task.id })}
+              >
+                Eliminar
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </Group>
       </Box>
       <Modal
