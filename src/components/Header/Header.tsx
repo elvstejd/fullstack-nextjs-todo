@@ -14,6 +14,9 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useExtendUserExpiry } from "../../hooks/useExtendUserExpiry";
 import { useSignUp } from "../../hooks/useSignUp";
+import { showNotification } from "@mantine/notifications";
+import { AiOutlineExclamation } from "react-icons/ai";
+import dayjs from "dayjs";
 
 export function Header() {
   const { data: session, status } = useSession();
@@ -54,7 +57,24 @@ export function Header() {
                       <Countdown
                         onComplete={() => signOut()}
                         date={session.user.expiresAt}
-                      />
+                      />{" "}
+                      <div hidden>
+                        <Countdown
+                          onComplete={() =>
+                            showNotification({
+                              icon: <AiOutlineExclamation />,
+                              autoClose: false,
+                              title: "Advertencia",
+                              color: "orange",
+                              message:
+                                'El perfil actual será eliminado en 5 minutos. Para extender tu sesión haz clic en "Extender tiempo".',
+                            })
+                          }
+                          date={dayjs(session?.user?.expiresAt)
+                            .subtract(5, "minutes")
+                            .toDate()}
+                        />
+                      </div>
                     </Text>
                   </>
                 )}
