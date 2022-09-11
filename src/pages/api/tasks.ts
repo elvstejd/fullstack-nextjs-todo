@@ -1,8 +1,11 @@
-import { validate } from "class-validator";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { withAuthentication } from "../../server/common/with-authentication";
 import { prisma } from "../../server/db/client";
-import { createTaskSchema } from "../../server/DTO/task";
+import {
+  createTaskSchema,
+  deleteTaskSchema,
+  updateTaskSchema,
+} from "../../server/DTO/task";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const uid = req.headers.uid as string;
@@ -31,24 +34,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       break;
 
     case "PATCH":
-      const patchTask = new UpdateTask(req.body);
+      try {
+        const patchTask = updateTaskSchema.parse({ ...req.body, userId: uid });
+        const updatedTask = await prisma.task.update({
+          where: { id: patchTask.id },
+          data: patchTask,
+        });
 
-      const patchErrors = await validate(patchTask);
-      if (patchErrors.length) return res.status(400).json(patchErrors);
-
-      const updatedTask = await prisma.task.update({
-        where: { id: patchTask.id },
-        data: patchTask,
-      });
-
-      res.status(200).json(updatedTask);
+        res.status(200).json(updatedTask);
+      } catch (e) {
+        res.status(400).json(e);
+      }
       break;
 
     case "DELETE":
-      const deleteTask = new DeleteTask(req.body);
-      console.log(deleteTask);
-      const deletedTask = await prisma.task.delete({ where: deleteTask });
-      res.status(204).json(deletedTask);
+      try {
+        const deleteTask = deleteTaskSchema.parse({ ...req.body, userId: uid });
+        const deletedTask = await prisma.task.delete({ where: deleteTask });
+
+        res.status(200).json(deletedTask);
+      } catch (e) {
+        res.status(400).json(e);
+      }
+
       break;
 
     default:

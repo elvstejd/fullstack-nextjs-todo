@@ -5,6 +5,7 @@ import Head from "next/head";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { MantineProvider } from "@mantine/core";
+import { NotificationsProvider } from "@mantine/notifications";
 
 const client = new QueryClient();
 
@@ -28,7 +29,9 @@ const MyApp: AppType = ({
               colorScheme: "light",
             }}
           >
-            <Component {...pageProps} />
+            <NotificationsProvider>
+              <Component {...pageProps} />
+            </NotificationsProvider>
           </MantineProvider>
         </SessionProvider>
         <ReactQueryDevtools />
