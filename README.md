@@ -4,6 +4,8 @@
 
 </div>
 
+![screenshot](https://user-images.githubusercontent.com/47759122/189557859-61e5e182-3e03-436c-acd3-5022e97878cc.png)
+
 Aplicación de lista de tareas para prueba fullstack Nelmix:
 
 - CRUD de tareas
